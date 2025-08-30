@@ -15,9 +15,7 @@ export class PaymentController {
             method,
             userId,
         );
-        res.status(201).json(
-            new ApiResponse(201, { payment }, 'Payment success'),
-        );
+        res.status(201).json(new ApiResponse(201, payment, 'Payment success'));
     });
 
     verify = asyncHandler(async (req: Request, res: Response) => {

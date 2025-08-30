@@ -116,6 +116,27 @@ export class EventService {
             throw new ApiError(403, 'Not authorized to delete event');
         await prisma.event.delete({ where: { id: eventId } });
     }
+
+    /**
+     * List events the user hosts (is ORGANIZER or MANAGER)
+     */
+    async listHostedEvents(userId: string) {
+        const roles = await prisma.eventRole.findMany({
+            where: { userId, role: { in: ['ORGANIZER', 'MANAGER'] } },
+            select: { eventId: true, role: true },
+        });
+        const eventIds = roles.map((r) => r.eventId);
+        if (!eventIds.length) return [];
+        const events = await prisma.event.findMany({
+            where: { id: { in: eventIds } },
+            include: { tickets: true },
+            orderBy: { createdAt: 'desc' },
+        });
+        return events.map((e) => ({
+            ...e,
+            userRole: roles.find((r) => r.eventId === e.id)?.role,
+        }));
+    }
 }
 
 export const eventService = new EventService();

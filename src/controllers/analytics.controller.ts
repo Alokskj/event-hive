@@ -9,5 +9,17 @@ export class AnalyticsController {
         const data = await analyticsService.getEventAnalytics(eventId);
         res.json(new ApiResponse(200, data, 'Event analytics'));
     });
+
+    getEventDashboardSummary = asyncHandler(
+        async (req: Request, res: Response) => {
+            const { eventId } = req.params;
+            const userId = req.user?.userId;
+            const data = await analyticsService.getEventDashboardSummary(
+                eventId,
+                userId!,
+            );
+            res.json(new ApiResponse(200, data, 'Dashboard summary'));
+        },
+    );
 }
 export const analyticsController = new AnalyticsController();

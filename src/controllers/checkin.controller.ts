@@ -1,26 +1,38 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../lib/utils/asyncHandler';
-import { ApiError } from '../lib/utils/ApiError';
 import { ApiResponse } from '../lib/utils/ApiResponse';
 import { checkInSchema } from '../schemas/checkin.schema';
+import { ApiError } from '../lib/utils/ApiError';
 import { checkInService } from '../services/checkin.service';
-import prisma from '@config/prisma';
 
 export class CheckInController {
     checkIn = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user?.userId;
-        if (!userId) throw new ApiError(401, 'Unauthorized');
         const data = checkInSchema.parse(req.body);
-        const result = await checkInService.checkIn(
-            { bookingId: data.bookingId, bookingNumber: data.bookingNumber },
-            userId,
-            data.method,
+        console.log(data);
+        const { checkIn, booking, alreadyCheckedIn } =
+            await checkInService.checkIn(
+                {
+                    bookingId: data.bookingId,
+                    bookingNumber: data.bookingNumber,
+                },
+                userId!,
+                data.method,
+            );
+        res.json(
+            new ApiResponse(
+                200,
+                { checkIn, booking, alreadyCheckedIn },
+                alreadyCheckedIn ? 'Already checked in' : 'Checked in',
+            ),
         );
-        await prisma.booking.update({
-            where: { id: result.bookingId },
-            data: { status: 'CHECKED_IN' },
-        });
-        res.json(new ApiResponse(200, { checkIn: result }, 'Checked in'));
+    });
+    listEventCheckIns = asyncHandler(async (req: Request, res: Response) => {
+        const userId = req.user?.userId;
+        if (!userId) throw new ApiError(401, 'Unauthorized');
+        const { eventId } = req.params;
+        const data = await checkInService.listEventCheckIns(eventId, userId);
+        res.json(new ApiResponse(200, data, 'Event check-ins'));
     });
 }
 export const checkInController = new CheckInController();

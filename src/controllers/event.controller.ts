@@ -65,6 +65,20 @@ export class EventController {
     });
 
     /**
+     * List events the authenticated user hosts (ORGANIZER or MANAGER)
+     */
+    listHostedEvents = asyncHandler(async (req: Request, res: Response) => {
+        const userId = req.user?.userId;
+        if (!userId) throw new ApiError(401, 'User not authenticated');
+        const events = await eventService.listHostedEvents(userId);
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, { data: events }, 'Hosted events fetched'),
+            );
+    });
+
+    /**
      * Delete an event
      */
     deleteEvent = asyncHandler(async (req: Request, res: Response) => {

@@ -1,18 +1,16 @@
 import { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, Outlet, useLocation } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
 import { UserRole } from '../types';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
-  children: ReactNode;
   requiredRoles?: UserRole[];
   requireEmailVerification?: boolean;
   requireLocationAccess?: boolean;
 }
 
 export const ProtectedRoute = ({
-  children,
   requiredRoles = [],
   requireEmailVerification = true,
 }: ProtectedRouteProps) => {
@@ -44,7 +42,7 @@ export const ProtectedRoute = ({
   }
 
 
-  return <>{children}</>;
+  return <Outlet />;
 };
 
 // Higher-order component for easier role-based protection

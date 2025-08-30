@@ -7,6 +7,8 @@ const router = Router();
 // Public routes
 router.get('/', eventController.listEvents);
 router.get('/:eventId', eventController.getEventById);
+// Authenticated user specific (hosted events)
+router.get('/me/hosted', authenticate, eventController.listHostedEvents);
 
 // Protected routes
 router.use(authenticate);

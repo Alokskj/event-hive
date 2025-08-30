@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React from 'react';
+import { Link } from 'react-router';
 
 const HeroSection = () => {
     return (
@@ -18,9 +19,11 @@ const HeroSection = () => {
                     </p>
 
                     <div className="flex items-center justify-center gap-3">
-                        <Button size="lg">Browse Events</Button>
-                        <Button size="lg" variant="secondary">
-                            Host an Event
+                        <Button size="lg" asChild>
+                            <Link to="/events">Browse Events</Link>
+                        </Button>
+                        <Button size="lg" variant="secondary" asChild>
+                            <Link to="/dashboard/events/new">Host an Event</Link>
                         </Button>
                     </div>
                 </div>

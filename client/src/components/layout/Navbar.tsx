@@ -4,11 +4,11 @@ import { useAuth, useLogout } from '@/modules/auth';
 
 const Navbar = () => {
     const { user, isAuthenticated } = useAuth();
-    const {mutateAsync: logout, isPending} = useLogout()
+    const { mutateAsync: logout, isPending } = useLogout();
 
     return (
         <section className="container flex justify-between items-center px-4 h-20 ">
-            <div>
+            <div className="flex items-center gap-6">
                 <h1 className="text-3xl font-bold tracking-tight">
                     🌃Event Hive
                 </h1>
@@ -16,10 +16,7 @@ const Navbar = () => {
             {isAuthenticated ? (
                 <div className="flex items-center gap-2">
                     <Button variant="outline" asChild>
-                        <Link to="/profile">My Events</Link>
-                    </Button>
-                    <Button onClick={() => logout()} disabled={isPending}>
-                       {isPending ? 'Logging out...' : 'Logout'}
+                        <Link to="/dashboard">Dashboard</Link>
                     </Button>
                 </div>
             ) : (

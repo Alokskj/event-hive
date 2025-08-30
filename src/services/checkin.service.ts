@@ -21,6 +21,7 @@ export class CheckInService {
             include: { event: true, checkIn: true },
         });
         if (!booking) throw new ApiError(404, 'Booking not found');
+
         const role = await prisma.eventRole.findFirst({
             where: {
                 eventId: booking.eventId,
@@ -29,9 +30,13 @@ export class CheckInService {
             },
         });
         if (!role) throw new ApiError(403, 'Not authorized to check in');
-        if (booking.status !== 'CONFIRMED')
+
+        if (booking.status !== 'CONFIRMED' && booking.status !== 'CHECKED_IN')
             throw new ApiError(400, 'Booking not confirmed');
-        if (booking.checkIn) return booking.checkIn;
+
+        if (booking.checkIn) {
+            throw new ApiError(400, 'Already checked in');
+        }
         const checkIn = await prisma.checkIn.create({
             data: {
                 eventId: booking.eventId,
@@ -44,7 +49,48 @@ export class CheckInService {
             where: { id: booking.id },
             data: { status: 'CHECKED_IN' },
         });
-        return checkIn;
+        return {
+            checkIn,
+            booking: { ...booking, checkIn },
+            alreadyCheckedIn: false,
+        };
+    }
+
+    async listEventCheckIns(eventId: string, userId: string) {
+        // authorize
+        const role = await prisma.eventRole.findFirst({
+            where: {
+                eventId,
+                userId,
+                role: { in: ['ORGANIZER', 'MANAGER', 'VOLUNTEER'] },
+            },
+        });
+        if (!role) throw new ApiError(403, 'Not authorized');
+        const checkIns = await prisma.checkIn.findMany({
+            where: { eventId },
+            include: {
+                booking: {
+                    select: {
+                        id: true,
+                        bookingNumber: true,
+                        attendeeName: true,
+                        attendeeEmail: true,
+                        attendeePhone: true,
+                        quantity: true,
+                        status: true,
+                        createdAt: true,
+                    },
+                },
+            },
+            orderBy: { checkedInAt: 'desc' },
+            take: 500,
+        });
+        return checkIns.map((c) => ({
+            id: c.id,
+            checkedInAt: c.checkedInAt,
+            method: c.method,
+            booking: c.booking,
+        }));
     }
 }
 export const checkInService = new CheckInService();

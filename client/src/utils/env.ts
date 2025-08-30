@@ -4,4 +4,5 @@ export const env = {
   NODE_ENV: import.meta.env.MODE,
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
+  razorpayKeyId: import.meta.env.VITE_RAZORPAY_KEY_ID,
 } as const

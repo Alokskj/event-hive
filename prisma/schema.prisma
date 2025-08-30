@@ -71,6 +71,7 @@ enum PaymentMethod {
   DEBIT_CARD
   NET_BANKING
   WALLET
+  RAZORPAY
 }
 
 enum NotificationType {

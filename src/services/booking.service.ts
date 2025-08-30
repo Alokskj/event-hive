@@ -102,11 +102,43 @@ export class BookingService {
         if (booking.userId !== userId) throw new ApiError(403, 'Forbidden');
         return booking;
     }
-    async listUserBookings(userId: string) {
-        return prisma.booking.findMany({
-            where: { userId },
-            orderBy: { createdAt: 'desc' },
-        });
+    async listUserBookings(
+        userId: string,
+        opts: { page: number; limit: number; search?: string },
+    ) {
+        const { page, limit, search } = opts;
+        const where: any = { userId };
+        if (search) {
+            where.OR = [
+                { bookingNumber: { contains: search, mode: 'insensitive' } },
+                { attendeeName: { contains: search, mode: 'insensitive' } },
+                { attendeeEmail: { contains: search, mode: 'insensitive' } },
+                { event: { title: { contains: search, mode: 'insensitive' } } },
+            ];
+        }
+        const [items, total] = await Promise.all([
+            prisma.booking.findMany({
+                where,
+                include: {
+                    event: {
+                        select: {
+                            id: true,
+                            title: true,
+                            startDateTime: true,
+                            endDateTime: true,
+                            city: true,
+                            state: true,
+                            bannerImage: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+                skip: (page - 1) * limit,
+                take: limit,
+            }),
+            prisma.booking.count({ where }),
+        ]);
+        return { items, total, page, limit, pages: Math.ceil(total / limit) };
     }
     async cancelBooking(bookingId: string, userId: string) {
         const booking = await prisma.booking.findUnique({

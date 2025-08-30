@@ -89,5 +89,61 @@ export class AnalyticsService {
             generatedAt: new Date().toISOString(),
         };
     }
+
+    /**
+     * Lightweight dashboard summary (bookings, revenue, checkIns, ticketsSold) with role auth
+     */
+    async getEventDashboardSummary(eventId: string, userId: string) {
+        // authorize
+        const role = await prisma.eventRole.findFirst({
+            where: { eventId, userId, role: { in: ['ORGANIZER', 'MANAGER'] } },
+        });
+        if (!role) throw new ApiError(403, 'Not authorized');
+        const [agg, checkInsCount, event] = await Promise.all([
+            prisma.booking.aggregate({
+                where: { eventId, status: { in: ['CONFIRMED', 'CHECKED_IN'] } },
+                _sum: { finalAmount: true, quantity: true },
+                _count: { _all: true },
+            }),
+            prisma.checkIn.count({ where: { eventId } }),
+            prisma.event.findUnique({
+                where: { id: eventId },
+                select: { maxAttendees: true },
+            }),
+        ]);
+        const ticketsSold = agg._sum.quantity || 0;
+        const capacity = event?.maxAttendees || null;
+        const revenue = Number(agg._sum.finalAmount || 0);
+        const bookings = agg._count._all;
+        const soldPercentage = capacity
+            ? +((ticketsSold / capacity) * 100).toFixed(2)
+            : null;
+        // today activity
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const todayBookings = await prisma.booking.count({
+            where: {
+                eventId,
+                status: { in: ['CONFIRMED', 'CHECKED_IN'] },
+                createdAt: { gte: startOfDay },
+            },
+        });
+        const todayCheckIns = await prisma.checkIn.count({
+            where: { eventId, checkedInAt: { gte: startOfDay } },
+        });
+        return {
+            eventId,
+            summary: {
+                bookings,
+                ticketsSold,
+                checkIns: checkInsCount,
+                revenue,
+                capacity,
+                soldPercentage,
+            },
+            today: { bookings: todayBookings, checkIns: todayCheckIns },
+            generatedAt: new Date().toISOString(),
+        };
+    }
 }
 export const analyticsService = new AnalyticsService();
