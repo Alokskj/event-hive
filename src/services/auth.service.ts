@@ -444,8 +444,6 @@ export class AuthService {
      * Logout user
      */
     async logout(userId: string): Promise<void> {
-        // TODO: Implement token blacklisting if needed
-
         // Create audit log
         await auditService.logAuth(userId, 'USER_LOGOUT');
     }

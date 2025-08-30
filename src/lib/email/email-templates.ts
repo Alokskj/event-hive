@@ -20,79 +20,81 @@ export class EmailTemplates {
         email: string;
         verificationToken: string;
     }): EmailTemplate {
-        const firstName = data.firstName || 'Citizen';
+        const firstName = data.firstName || 'User';
         const verificationLink = `${this.baseUrl}/verify-email?token=${data.verificationToken}`;
 
         return {
             subject: `Welcome to ${this.appName} - Verify Your Email`,
             html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Welcome to ${this.appName}</title>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-            .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
-            .button { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
-            .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 14px; color: #64748b; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>🏙️ Welcome to ${this.appName}</h1>
-          </div>
-          <div class="content">
-            <h2>Hello ${firstName}!</h2>
-            <p>Thank you for joining ${this.appName}, the platform that empowers citizens to report and track local civic issues.</p>
-            
-            <p>To get started, please verify your email address by clicking the button below:</p>
-            
-            <a href="${verificationLink}" class="button">Verify Email Address</a>
-            
-            <p>Or copy and paste this link into your browser:</p>
-            <p><a href="${verificationLink}">${verificationLink}</a></p>
-            
-            <p>Once verified, you'll be able to:</p>
-            <ul>
-              <li>Report civic issues in your neighborhood</li>
-              <li>Track the status of your reports</li>
-              <li>View and flag issues reported by other citizens</li>
-              <li>Receive notifications about issue updates</li>
-            </ul>
-            
-            <p>This verification link will expire in 24 hours for security reasons.</p>
-          </div>
-          <div class="footer">
-            <p>If you didn't create an account with ${this.appName}, please ignore this email.</p>
-            <p>© 2025 ${this.appName}. All rights reserved.</p>
-          </div>
-        </body>
-        </html>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to ${this.appName}</title>
+        <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
+        .button { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+        .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 14px; color: #64748b; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+        <h1>🎉 Welcome to ${this.appName}</h1>
+        </div>
+        <div class="content">
+        <h2>Hello ${firstName}!</h2>
+        <p>Welcome to ${this.appName}, your ultimate platform for discovering amazing events and managing seamless event experiences.</p>
+        
+        <p>To get started, please verify your email address by clicking the button below:</p>
+        
+        <a href="${verificationLink}" class="button">Verify Email Address</a>
+        
+        <p>Or copy and paste this link into your browser:</p>
+        <p><a href="${verificationLink}">${verificationLink}</a></p>
+        
+        <p>Once verified, you'll be able to:</p>
+        <ul>
+          <li>Discover and book tickets for exciting events</li>
+          <li>Manage your bookings and download tickets</li>
+          <li>Receive event reminders and updates</li>
+          <li>Earn loyalty points and enjoy exclusive discounts</li>
+          <li>Create and manage your own events (for organizers)</li>
+        </ul>
+        
+        <p>This verification link will expire in 24 hours for security reasons.</p>
+        </div>
+        <div class="footer">
+        <p>If you didn't create an account with ${this.appName}, please ignore this email.</p>
+        <p>© 2025 ${this.appName}. All rights reserved.</p>
+        </div>
+      </body>
+      </html>
       `,
             text: `
-Welcome to ${this.appName}!
+  Welcome to ${this.appName}!
 
-Hello ${firstName},
+  Hello ${firstName},
 
-Thank you for joining ${this.appName}, the platform that empowers citizens to report and track local civic issues.
+  Welcome to ${this.appName}, your ultimate platform for discovering amazing events and managing seamless event experiences.
 
-To get started, please verify your email address by visiting this link:
-${verificationLink}
+  To get started, please verify your email address by visiting this link:
+  ${verificationLink}
 
-Once verified, you'll be able to:
-- Report civic issues in your neighborhood
-- Track the status of your reports
-- View and flag issues reported by other citizens
-- Receive notifications about issue updates
+  Once verified, you'll be able to:
+  - Discover and book tickets for exciting events
+  - Manage your bookings and download tickets
+  - Receive event reminders and updates
+  - Earn loyalty points and enjoy exclusive discounts
+  - Create and manage your own events (for organizers)
 
-This verification link will expire in 24 hours for security reasons.
+  This verification link will expire in 24 hours for security reasons.
 
-If you didn't create an account with ${this.appName}, please ignore this email.
+  If you didn't create an account with ${this.appName}, please ignore this email.
 
-© 2025 ${this.appName}. All rights reserved.
+  © 2025 ${this.appName}. All rights reserved.
       `,
         };
     }

@@ -1,4 +1,9 @@
-import { Event, EventStatus, EventCategory, EventRoleType } from '@prisma/client';
+import {
+    Event,
+    EventStatus,
+    EventCategory,
+    EventRoleType,
+} from '@prisma/client';
 
 export type EventWithRelations = Event & {
     tickets?: any[];

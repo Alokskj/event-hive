@@ -22,9 +22,9 @@ router.use('/audit', auditRoutes);
 
 // Event routes
 router.use('/events', eventRoutes);
+router.use('/', paymentRoutes);
 router.use('/', ticketRoutes);
 router.use('/', bookingRoutes);
-router.use('/', paymentRoutes);
 router.use('/', reviewRoutes);
 router.use('/', checkInRoutes);
 router.use('/', analyticsRoutes);

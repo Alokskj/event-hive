@@ -42,15 +42,12 @@ export const authenticate = async (
             throw new ApiError(401, 'User not found');
         }
 
-        if (!user.isActive) {
-            throw new ApiError(403, 'Account is deactivated');
+        if (!user.isVerified) {
+            throw new ApiError(403, 'Email verification required');
         }
 
-        if (user.isBanned) {
-            throw new ApiError(
-                403,
-                `Account is banned. Reason: ${user.banReason || 'No reason provided'}`,
-            );
+        if (!user.isActive) {
+            throw new ApiError(403, 'Account is deactivated');
         }
 
         // Add user to request object
@@ -65,6 +62,7 @@ export const authenticate = async (
                 data: null,
             });
         }
+        console.error('Authentication error:', error);
 
         return res.status(401).json({
             success: false,
@@ -115,46 +113,6 @@ export const authorize = (...roles: UserRole[]) => {
             });
         }
     };
-};
-
-/**
- * Middleware for optional authentication (user can be authenticated or not)
- */
-export const optionalAuthenticate = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-) => {
-    try {
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            // No token provided, continue without authentication
-            return next();
-        }
-
-        const token = authHeader.substring(7);
-
-        try {
-            const payload = verifyToken(token, 'access');
-
-            // Verify user still exists and is active
-            const user = await prisma.user.findUnique({
-                where: { id: payload.userId },
-            });
-
-            if (user && user.isActive && !user.isBanned) {
-                req.user = payload as AuthUser;
-            }
-        } catch (error) {
-            // Invalid token, but continue without authentication
-        }
-
-        next();
-    } catch (error) {
-        // Error in optional authentication, continue without user
-        next();
-    }
 };
 
 /**

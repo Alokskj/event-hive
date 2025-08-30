@@ -17,22 +17,20 @@ export class BookingController {
             eventId: req.params.eventId,
         });
         const booking = await bookingService.createBooking(data, userId);
-        res.status(201).json(
-            new ApiResponse(201, { booking }, 'Booking created'),
-        );
+        res.status(201).json(new ApiResponse(201, booking, 'Booking created'));
     });
     get = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'Unauthorized');
         const { bookingId } = bookingIdParamSchema.parse(req.params);
         const booking = await bookingService.getBooking(bookingId, userId);
-        res.json(new ApiResponse(200, { booking }, 'Booking fetched'));
+        res.json(new ApiResponse(200, booking, 'Booking fetched'));
     });
     listMine = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'Unauthorized');
         const bookings = await bookingService.listUserBookings(userId);
-        res.json(new ApiResponse(200, { bookings }, 'Bookings fetched'));
+        res.json(new ApiResponse(200, bookings, 'Bookings fetched'));
     });
     cancel = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user?.userId;

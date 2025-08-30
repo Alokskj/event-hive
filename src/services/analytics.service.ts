@@ -2,29 +2,6 @@ import prisma from '../config/prisma';
 import { ApiError } from '../lib/utils/ApiError';
 
 export class AnalyticsService {
-    async recordView(eventId: string) {
-        const event = await prisma.event.findUnique({ where: { id: eventId } });
-        if (!event) throw new ApiError(404, 'Event not found');
-        const today = new Date();
-        const dateOnly = new Date(
-            Date.UTC(
-                today.getUTCFullYear(),
-                today.getUTCMonth(),
-                today.getUTCDate(),
-            ),
-        );
-        await prisma.eventAnalytics.upsert({
-            where: { eventId_date: { eventId, date: dateOnly as any } },
-            create: {
-                eventId,
-                date: dateOnly as any,
-                views: 1,
-                uniqueViews: 1,
-            },
-            update: { views: { increment: 1 } },
-        });
-    }
-
     /**
      * Aggregate analytics for an event: tickets sold, revenue, active attendees, breakdowns
      */

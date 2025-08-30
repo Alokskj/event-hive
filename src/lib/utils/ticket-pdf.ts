@@ -9,6 +9,8 @@ export interface TicketPdfOptions {
     attendeeName: string;
     items: { name: string; quantity: number }[];
     qrData: string; // data encoded in QR
+    pageSize?: 'A4' | 'A5' | 'Letter';
+    orientation?: 'portrait' | 'landscape';
 }
 
 export async function generateTicketPdf(
@@ -19,7 +21,10 @@ export async function generateTicketPdf(
         margin: 1,
         width: 240,
     });
-    const doc = new PDFDocument({ size: 'A4', margin: 50 });
+    const doc = new PDFDocument({
+        size: opts.pageSize || 'A4',
+        layout: opts.orientation || 'portrait',
+    });
     const chunks: Buffer[] = [];
     doc.on('data', (c: Buffer) => chunks.push(c));
     const done = new Promise<Buffer>((resolve) => {

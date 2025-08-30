@@ -45,14 +45,7 @@ export class BookingService {
                         400,
                         `Not enough availability for ${ticket.name}`,
                     );
-                if (
-                    now < new Date(ticket.saleStartDate) ||
-                    now > new Date(ticket.saleEndDate)
-                )
-                    throw new ApiError(
-                        400,
-                        `Ticket ${ticket.name} not on sale`,
-                    );
+
                 total += Number(ticket.price) * item.quantity;
             }
             const bookingNumber = generateBookingNumber();

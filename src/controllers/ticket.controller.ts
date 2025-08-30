@@ -18,14 +18,12 @@ export class TicketController {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'Unauthorized');
         const ticket = await ticketService.createTicket(data, userId);
-        res.status(201).json(
-            new ApiResponse(201, { ticket }, 'Ticket created'),
-        );
+        res.status(201).json(new ApiResponse(201, ticket, 'Ticket created'));
     });
     listByEvent = asyncHandler(async (req: Request, res: Response) => {
         const eventId = req.params.eventId;
         const tickets = await ticketService.listTickets(eventId);
-        res.json(new ApiResponse(200, { tickets }, 'Tickets fetched'));
+        res.json(new ApiResponse(200, tickets, 'Tickets fetched'));
     });
     update = asyncHandler(async (req: Request, res: Response) => {
         const { ticketId } = ticketIdSchema.parse(req.params);
@@ -33,7 +31,7 @@ export class TicketController {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'Unauthorized');
         const ticket = await ticketService.updateTicket(ticketId, data, userId);
-        res.json(new ApiResponse(200, { ticket }, 'Ticket updated'));
+        res.json(new ApiResponse(200, ticket, 'Ticket updated'));
     });
     delete = asyncHandler(async (req: Request, res: Response) => {
         const { ticketId } = ticketIdSchema.parse(req.params);

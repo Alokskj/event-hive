@@ -7,7 +7,7 @@ import {
     createEventSchema,
     updateEventSchema,
     eventIdSchema,
-    listEventsSchema
+    listEventsSchema,
 } from '../schemas/event.schema';
 
 export class EventController {
@@ -19,7 +19,9 @@ export class EventController {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'User not authenticated');
         const event = await eventService.createEvent(validatedData, userId);
-        return res.status(201).json(new ApiResponse(201, { event }, 'Event created successfully'));
+        return res
+            .status(201)
+            .json(new ApiResponse(201, event, 'Event created successfully'));
     });
 
     /**
@@ -29,9 +31,15 @@ export class EventController {
         const { eventId } = eventIdSchema.parse(req.params);
         const validatedData = updateEventSchema.parse(req.body);
         const userId = req.user?.userId;
-        if (!userId) throw new ApiError(401, 'User not authenticated');
-        const event = await eventService.updateEvent(eventId, validatedData, userId);
-        return res.status(200).json(new ApiResponse(200, { event }, 'Event updated successfully'));
+
+        const event = await eventService.updateEvent(
+            eventId,
+            validatedData,
+            userId!,
+        );
+        return res
+            .status(200)
+            .json(new ApiResponse(200, event, 'Event updated successfully'));
     });
 
     /**
@@ -40,7 +48,9 @@ export class EventController {
     getEventById = asyncHandler(async (req: Request, res: Response) => {
         const { eventId } = eventIdSchema.parse(req.params);
         const event = await eventService.getEventById(eventId);
-        return res.status(200).json(new ApiResponse(200, { event }, 'Event retrieved successfully'));
+        return res
+            .status(200)
+            .json(new ApiResponse(200, event, 'Event retrieved successfully'));
     });
 
     /**
@@ -48,8 +58,10 @@ export class EventController {
      */
     listEvents = asyncHandler(async (req: Request, res: Response) => {
         const filters = listEventsSchema.parse(req.query);
-        const events = await eventService.listEvents(filters);
-        return res.status(200).json(new ApiResponse(200, { events }, 'Events retrieved successfully'));
+        const data = await eventService.listEvents(filters);
+        return res
+            .status(200)
+            .json(new ApiResponse(200, data, 'Events retrieved successfully'));
     });
 
     /**
@@ -60,7 +72,9 @@ export class EventController {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'User not authenticated');
         await eventService.deleteEvent(eventId, userId);
-        return res.status(200).json(new ApiResponse(200, null, 'Event deleted successfully'));
+        return res
+            .status(200)
+            .json(new ApiResponse(200, null, 'Event deleted successfully'));
     });
 }
 

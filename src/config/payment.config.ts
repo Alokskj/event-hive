@@ -1,7 +1,7 @@
 import Razorpay from 'razorpay';
-import { getEnv } from '../lib/utils/get-env';
+import _config from './_config';
 
 export const razorpay = new Razorpay({
-    key_id: getEnv('RAZORPAY_KEY_ID'),
-    key_secret: getEnv('RAZORPAY_KEY_SECRET'),
+    key_id: _config.razorpayKeyId,
+    key_secret: _config.razorpayKeySecret,
 });

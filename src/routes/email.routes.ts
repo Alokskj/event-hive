@@ -11,5 +11,4 @@ router.post('/resend-verification', emailController.resendEmailVerification);
 // Protected routes (authentication required)
 router.use(authenticate);
 
-
 export default router;

@@ -271,6 +271,8 @@ export class EmailService {
                 quantity: i.quantity,
             })),
             qrData: qrPayload,
+            orientation: 'portrait',
+            pageSize: 'A4',
         });
         try {
             const template = EmailTemplates.ticketDelivery({

@@ -4,6 +4,7 @@ import { PaymentMethod, PaymentStatus } from '@prisma/client';
 import { razorpay } from '../config/payment.config';
 import crypto from 'crypto';
 import { emailService } from './email.service';
+import _config from '@config/_config';
 
 export class PaymentService {
     async initiate(bookingId: string, method: PaymentMethod, userId: string) {
@@ -47,14 +48,11 @@ export class PaymentService {
         };
     }
 
-    async verifyAndCapture(
-        params: {
-            razorpay_order_id: string;
-            razorpay_payment_id: string;
-            razorpay_signature: string;
-        },
-        userId: string,
-    ) {
+    async verifyAndCapture(params: {
+        razorpay_order_id: string;
+        razorpay_payment_id: string;
+        razorpay_signature: string;
+    }) {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
             params;
         // find payment by order id
@@ -63,13 +61,11 @@ export class PaymentService {
             include: { booking: true },
         });
         if (!payment) throw new ApiError(404, 'Payment record not found');
-        if (payment.booking.userId !== userId)
-            throw new ApiError(403, 'Forbidden');
         if (payment.status !== 'PENDING')
             throw new ApiError(400, 'Payment already processed');
 
         const generatedSignature = crypto
-            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || '')
+            .createHmac('sha256', _config.razorpayKeySecret || '')
             .update(razorpay_order_id + '|' + razorpay_payment_id)
             .digest('hex');
         if (generatedSignature !== razorpay_signature)

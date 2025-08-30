@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Razorpay Test Payment</title>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: #f4f4f9;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+            }
+
+            .container {
+                background: white;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 400px;
+                text-align: center;
+            }
+
+            h1 {
+                margin-bottom: 24px;
+                color: #4b2aad;
+            }
+
+            label {
+                font-weight: 600;
+                margin-bottom: 8px;
+                display: block;
+                color: #444;
+                text-align: left;
+            }
+
+            input[type='text'] {
+                width: 100%;
+                padding: 10px 14px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                margin-top: 6px;
+                margin-bottom: 20px;
+                outline: none;
+                transition: border 0.3s ease;
+            }
+
+            input[type='text']:focus {
+                border-color: #732ffc;
+            }
+
+            button {
+                background: #732ffc;
+                color: white;
+                padding: 12px 20px;
+                font-size: 16px;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+
+            button:hover {
+                background: #5b22c2;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Razorpay Test Payment</h1>
+
+            <label for="orderId">Enter Razorpay Order ID:</label>
+            <input
+                type="text"
+                id="orderId"
+                placeholder="order_NmRL8cYjQa5zPY" />
+
+            <button id="pay-button">Pay Now</button>
+        </div>
+
+        <script>
+            document.getElementById('pay-button').onclick = function () {
+                const orderId = document.getElementById('orderId').value.trim();
+                if (!orderId) {
+                    alert('Please enter a valid Razorpay Order ID');
+                    return;
+                }
+
+                const options = {
+                    key: 'rzp_test_aMX2ufAx4sVQkj',
+                    currency: 'INR',
+                    name: 'Event Hive',
+                    description: 'Test Transaction',
+                    order_id: orderId,
+                    handler: function (response) {
+                        console.log('Payment Success', response);
+
+                        fetch('http://localhost:5000/api/payments/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        })
+                            .then((res) => res.json())
+                            .then((data) => {
+                                alert('Payment Verified: ' + JSON.stringify(data));
+                            })
+                            .catch((err) => {
+                                alert('Verification Failed: ' + err.message);
+                            });
+                    },
+                    theme: {
+                        color: '#FFFFFF'
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+            };
+        </script>
+    </body>
+</html>

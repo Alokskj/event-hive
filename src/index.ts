@@ -16,25 +16,9 @@ import { startNotificationSchedulers } from './lib/notifications/scheduler';
 const app = express();
 
 // middlewares
-app.use(
-    cors({
-        origin: (origin, callback) => {
-            // Allow requests with no origin (like mobile apps, curl, etc.)
-            if (!origin) return callback(null, true);
 
-            if (_config.corsOrigin.includes(origin)) {
-                return callback(null, true);
-            } else {
-                return callback(
-                    new BadRequestException(
-                        `CORS policy does not allow access from origin: ${origin}`,
-                    ),
-                );
-            }
-        },
-        credentials: true,
-    }),
-);
+app.use(express.static('public'));
+app.use(cors({ origin: '*' }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());

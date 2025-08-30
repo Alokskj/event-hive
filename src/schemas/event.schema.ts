@@ -19,7 +19,7 @@ export const createEventSchema = z.object({
     latitude: z.number().optional(),
     longitude: z.number().optional(),
     isOnline: z.boolean().optional(),
-    onlineLink: z.string().url().optional(),
+    onlineLink: z.string().url().optional().nullable(),
     bannerImage: z.string().optional(),
     galleryImages: z.array(z.string()).optional(),
     maxAttendees: z.number().int().positive().optional(),
@@ -45,8 +45,8 @@ export const listEventsSchema = z.object({
     isFeatured: z.boolean().optional(),
     isPublic: z.boolean().optional(),
     search: z.string().optional(),
-    skip: z.coerce.number().int().min(0).optional(),
-    take: z.coerce.number().int().min(1).max(100).optional(),
+    page: z.coerce.number().int().min(0).optional(),
+    limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;

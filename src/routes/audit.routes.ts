@@ -24,9 +24,6 @@ router.get(
 // Get audit statistics
 router.get('/stats', auditController.getAuditStats);
 
-// Export audit logs as CSV
-router.get('/export', auditController.exportAuditLogs);
-
 // Create manual audit log entry
 router.post('/log', auditController.createAuditLog);
 

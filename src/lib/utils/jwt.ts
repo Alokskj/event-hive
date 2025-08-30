@@ -49,10 +49,7 @@ export function verifyToken(
         for (const type of typesToTry) {
             try {
                 const secret = getTokenSecret(type);
-                const decoded = jwt.verify(token, secret, {
-                    issuer: 'eventhive',
-                    audience: 'eventhive-users',
-                }) as TokenPayload;
+                const decoded = jwt.verify(token, secret) as TokenPayload;
 
                 // If expectedType is provided, verify it matches
                 if (expectedType && decoded.type !== expectedType) {
@@ -62,6 +59,7 @@ export function verifyToken(
                 return decoded;
             } catch (error) {
                 // Try next type
+                console.error('Token verification error:', error);
                 continue;
             }
         }

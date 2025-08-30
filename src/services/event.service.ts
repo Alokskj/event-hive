@@ -1,6 +1,9 @@
 import prisma from '../config/prisma';
-import { EventStatus, EventCategory } from '@prisma/client';
-import { CreateEventInput, UpdateEventInput, ListEventsInput } from '../schemas/event.schema';
+import {
+    CreateEventInput,
+    UpdateEventInput,
+    ListEventsInput,
+} from '../schemas/event.schema';
 import { ApiError } from '../lib/utils/ApiError';
 
 export class EventService {
@@ -29,8 +32,12 @@ export class EventService {
         const eventRole = await prisma.eventRole.findFirst({
             where: { eventId, userId, role: { in: ['ORGANIZER', 'MANAGER'] } },
         });
-        if (!eventRole) throw new ApiError(403, 'Not authorized to update event');
-        const event = await prisma.event.update({ where: { id: eventId }, data });
+        if (!eventRole)
+            throw new ApiError(403, 'Not authorized to update event');
+        const event = await prisma.event.update({
+            where: { id: eventId },
+            data,
+        });
         return event;
     }
 
@@ -59,8 +66,8 @@ export class EventService {
             isFeatured,
             isPublic,
             search,
-            skip = 0,
-            take = 20,
+            page = 0,
+            limit = 20,
         } = filters;
         const where: any = {};
         if (category) where.category = category;
@@ -79,11 +86,22 @@ export class EventService {
         }
         const events = await prisma.event.findMany({
             where,
-            skip,
-            take,
+            include: {
+                tickets: true,
+            },
+            skip: page * limit,
+            take: limit,
             orderBy: { startDateTime: 'asc' },
         });
-        return events;
+
+        return {
+            data: events,
+            meta: {
+                total: events.length,
+                page,
+                limit,
+            },
+        };
     }
 
     /**
@@ -94,7 +112,8 @@ export class EventService {
         const eventRole = await prisma.eventRole.findFirst({
             where: { eventId, userId, role: 'ORGANIZER' },
         });
-        if (!eventRole) throw new ApiError(403, 'Not authorized to delete event');
+        if (!eventRole)
+            throw new ApiError(403, 'Not authorized to delete event');
         await prisma.event.delete({ where: { id: eventId } });
     }
 }

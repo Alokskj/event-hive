@@ -119,9 +119,9 @@ model User {
 
 model EventRole {
   id        String        @id @default(cuid())
-  user      User          @relation(fields: [userId], references: [id])
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  event     Event         @relation(fields: [eventId], references: [id])
+  event     Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   String
   role      EventRoleType
   createdAt DateTime      @default(now())
@@ -235,8 +235,8 @@ model Booking {
   status          BookingStatus @default(PENDING)
   
   // QR/Barcode
-  qrCode          String?       @unique
-  barcode         String?       @unique
+  qrCode          String?       
+  barcode         String?       
   
   // Metadata
   metadata        Json?

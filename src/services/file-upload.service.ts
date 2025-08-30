@@ -100,25 +100,6 @@ export class FileUploadService {
     }
 
     /**
-     * Get the Download URL for a file
-     */
-    private async generateDownloadUrl(
-        fileKey: string,
-        expiresIn: number,
-    ): Promise<string> {
-        const command = new GetObjectCommand({
-            Bucket: _config.s3Bucket,
-            Key: fileKey,
-        });
-
-        const signedUrl = await getSignedUrl(s3Client, command, {
-            expiresIn: expiresIn,
-        });
-
-        return signedUrl;
-    }
-
-    /**
      * Generate a unique file key with timestamp and UUID
      */
     private generateFileKey(_originalFileName: string): string {

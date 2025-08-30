@@ -24,6 +24,8 @@ const _config = {
     s3AccessKeyId: getEnv('AWS_ACCESS_KEY_ID', ''),
     s3SecretAccessKey: getEnv('AWS_SECRET_ACCESS_KEY', ''),
     s3Endpoint: getEnv('AWS_S3_ENDPOINT', ''),
+    razorpayKeyId: getEnv('RAZORPAY_KEY_ID', ''),
+    razorpayKeySecret: getEnv('RAZORPAY_KEY_SECRET', ''),
 };
 
 export default _config;
