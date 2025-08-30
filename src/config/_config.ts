@@ -11,7 +11,7 @@ const _config = {
     jwtEmailSecret: getEnv('JWT_EMAIL_SECRET', ''),
     jwtResetSecret: getEnv('JWT_RESET_SECRET', ''),
     clientURL: getEnv('CLIENT_URL', ''),
-    corsOrigin: getEnv('CORS_ORIGIN', ['']),
+    corsOrigin: getEnv('CORS_ORIGIN', ''),
     cookieSecret: getEnv('COOKIE_SECRET', ''),
     databaseURL: getEnv('DATABASE_URL', ''),
     smtpHost: getEnv('SMTP_HOST'),

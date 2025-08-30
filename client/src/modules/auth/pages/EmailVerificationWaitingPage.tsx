@@ -21,7 +21,7 @@ export const EmailVerificationWaitingPage = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-none border-none">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center">
             <Mail className="h-16 w-16 text-blue-600" />
@@ -35,14 +35,7 @@ export const EmailVerificationWaitingPage = () => {
         <CardContent>
           <div className="space-y-4">
             {/* Instructions */}
-            <div className="rounded-lg bg-blue-50 p-4">
-              <h3 className="font-medium text-blue-900 mb-2">Next steps:</h3>
-              <ol className="space-y-1 text-sm text-blue-800 list-decimal list-inside">
-                <li>Check your email inbox (and spam folder)</li>
-                <li>Click the verification link in the email</li>
-                <li>Return here to complete your registration</li>
-              </ol>
-            </div>
+           
 
             {/* Resend verification */}
             <div className="space-y-3">
@@ -52,7 +45,7 @@ export const EmailVerificationWaitingPage = () => {
               
               <Button
                 type="button"
-                variant="outline"
+
                 className="w-full"
                 onClick={handleResendVerification}
                 disabled={resendVerificationMutation.isPending || !email}
@@ -90,12 +83,7 @@ export const EmailVerificationWaitingPage = () => {
 
             {/* Action buttons */}
             <div className="space-y-2">
-              <Button asChild className="w-full">
-                <Link to="/auth/verify-email" state={{ email }}>
-                  I Have the Verification Code
-                </Link>
-              </Button>
-              
+           
               <Button asChild variant="outline" className="w-full">
                 <Link to="/auth/login">
                   Back to Login
@@ -106,13 +94,7 @@ export const EmailVerificationWaitingPage = () => {
             {/* Help text */}
             <div className="text-xs text-gray-500 text-center">
               <p>The verification link will expire in 24 hours.</p>
-              <p className="mt-1">
-                If you continue to have problems, please{' '}
-                <Link to="/contact" className="text-blue-600 hover:text-blue-500">
-                  contact support
-                </Link>
-                .
-              </p>
+             
             </div>
           </div>
         </CardContent>

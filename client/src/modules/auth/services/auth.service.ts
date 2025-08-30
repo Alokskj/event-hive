@@ -31,15 +31,6 @@ export class AuthService {
     return response;
   }
 
-  static async forgotPassword(data: ForgotPasswordRequest) {
-    const response = await api.post<{ message: string }>('/auth/forgot-password', data);
-    return response;
-  }
-
-  static async resetPassword(data: ResetPasswordRequest) {
-    const response = await api.post<{ message: string }>('/auth/reset-password', data);
-    return response;
-  }
 
   static async getProfile() {
     const response = await api.get<{ user: User }>('/auth/profile');
@@ -51,15 +42,6 @@ export class AuthService {
     return response;
   }
 
-  static async changePassword(data: ChangePasswordRequest) {
-    const response = await api.post<{ message: string }>('/auth/change-password', data);
-    return response;
-  }
-
-  static async refreshToken() {
-    const response = await api.post<{ user: User }>('/auth/refresh-token');
-    return response;
-  }
 
   static async logout() {
     const response = await api.post<{ message: string }>('/auth/logout');

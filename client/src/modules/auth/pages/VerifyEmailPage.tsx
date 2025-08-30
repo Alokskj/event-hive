@@ -69,7 +69,7 @@ export const VerifyEmailPage = () => {
             </div>
             <CardTitle className="text-2xl font-bold text-green-600">Email Verified!</CardTitle>
             <CardDescription>
-              Your email has been successfully verified. You can now access all features of CivicTrack.
+              Your email has been successfully verified. You can now access all features of Event Hive.
             </CardDescription>
           </CardHeader>
           <CardContent>

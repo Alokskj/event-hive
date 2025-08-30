@@ -21,7 +21,7 @@ export class EmailTemplates {
         verificationToken: string;
     }): EmailTemplate {
         const firstName = data.firstName || 'User';
-        const verificationLink = `${this.baseUrl}/verify-email?token=${data.verificationToken}`;
+        const verificationLink = `${this.baseUrl}/auth/verify-email?token=${data.verificationToken}`;
 
         return {
             subject: `Welcome to ${this.appName} - Verify Your Email`,

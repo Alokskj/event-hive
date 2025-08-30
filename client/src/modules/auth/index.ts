@@ -1,5 +1,5 @@
 // Components
-export { ProtectedRoute, AdminRoute, ModeratorRoute, CitizenRoute, withAuth } from './components/ProtectedRoute';
+export { ProtectedRoute, withAuth } from './components/ProtectedRoute';
 
 // Pages
 export { LoginPage } from './pages/LoginPage';
@@ -9,16 +9,12 @@ export { EmailVerificationWaitingPage } from './pages/EmailVerificationWaitingPa
 
 // Hooks
 export { useAuth } from './hooks/useAuth';
-export { useAuthStore } from './hooks/useAuthStore';
 export {
   useLogin,
   useRegister,
   useLogout,
   useVerifyEmail,
   useResendVerification,
-  useForgotPassword,
-  useResetPassword,
-  useChangePassword,
   useUpdateProfile,
 } from './hooks/useAuth';
 

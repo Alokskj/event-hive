@@ -78,7 +78,7 @@ export class AuthController {
         res.cookie('refreshToken', result.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
+            sameSite: 'lax',
             maxAge,
         });
 
@@ -86,7 +86,7 @@ export class AuthController {
         res.cookie('accessToken', result.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
@@ -145,6 +145,7 @@ export class AuthController {
 
         // Clear refresh token cookie
         res.clearCookie('refreshToken');
+        res.clearCookie('accessToken');
 
         return res
             .status(200)

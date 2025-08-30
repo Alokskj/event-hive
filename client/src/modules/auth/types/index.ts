@@ -39,9 +39,6 @@ export interface RegisterRequest {
   confirmPassword: string;
   firstName: string;
   lastName: string;
-  username: string;
-  phone?: string;
-  organizationId?: string;
 }
 
 export interface VerifyEmailRequest {

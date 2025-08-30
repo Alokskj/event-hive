@@ -1,6 +1,9 @@
 import { createBrowserRouter } from 'react-router';
-import { authRoutes, userRoutes, adminRoutes } from './routes';
+import { authRoutes, userRoutes } from './routes';
 import { NotFoundScreen } from '@/components/feedback';
+import { lazy } from 'react';
+
+const HomePage = lazy(() => import('@/modules/landing/pages/HomePage'));
 
 export const router = createBrowserRouter([
     {
@@ -12,9 +15,8 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/',
-                children: userRoutes,
+                element: <HomePage />,
             },
-            ...adminRoutes,
         ],
     },
 ]);

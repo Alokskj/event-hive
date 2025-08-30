@@ -14,7 +14,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({
   children,
   requiredRoles = [],
-  requireEmailVerification = false,
+  requireEmailVerification = true,
 }: ProtectedRouteProps) => {
   const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
@@ -58,22 +58,3 @@ export const withAuth = (
     </ProtectedRoute>
   );
 };
-
-// Specific role-based components
-export const AdminRoute = ({ children }: { children: ReactNode }) => (
-  <ProtectedRoute requiredRoles={[UserRole.ADMIN]} requireEmailVerification>
-    {children}
-  </ProtectedRoute>
-);
-
-export const ModeratorRoute = ({ children }: { children: ReactNode }) => (
-  <ProtectedRoute requiredRoles={[UserRole.MODERATOR, UserRole.ADMIN]} requireEmailVerification>
-    {children}
-  </ProtectedRoute>
-);
-
-export const CitizenRoute = ({ children }: { children: ReactNode }) => (
-  <ProtectedRoute requireEmailVerification requireLocationAccess>
-    {children}
-  </ProtectedRoute>
-);

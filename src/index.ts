@@ -18,7 +18,7 @@ const app = express();
 // middlewares
 
 app.use(express.static('public'));
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: _config.corsOrigin, credentials: true }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());

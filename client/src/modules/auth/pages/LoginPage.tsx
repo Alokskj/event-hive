@@ -35,11 +35,11 @@ export const LoginPage = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md rounded-none border-0 shadow-none bg-transparent">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
           <CardDescription>
-            Sign in to your CivicTrack account to report and track local issues
+            Sign in to your account to explore the events
           </CardDescription>
         </CardHeader>
         <CardContent>
