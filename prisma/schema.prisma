@@ -8,6 +8,100 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum EventRoleType {
+  ORGANIZER
+  MANAGER
+  VOLUNTEER
+  ATTENDEE
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum EventCategory {
+  WORKSHOP
+  CONCERT
+  SPORTS
+  HACKATHON
+  CONFERENCE
+  NETWORKING
+  EXHIBITION
+  CULTURAL
+  EDUCATIONAL
+  ENTERTAINMENT
+}
+
+enum TicketType {
+  GENERAL
+  VIP
+  STUDENT
+  EARLY_BIRD
+  GROUP
+  PREMIUM
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+  CHECKED_IN
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  UPI
+  CREDIT_CARD
+  DEBIT_CARD
+  NET_BANKING
+  WALLET
+}
+
+enum NotificationType {
+  EMAIL
+  WHATSAPP
+  SMS
+  PUSH
+}
+
+enum NotificationEvent {
+  BOOKING_CONFIRMATION
+  REMINDER_24H
+  REMINDER_1H
+  EVENT_UPDATE
+  CANCELLATION
+  REFUND_PROCESSED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  BUY_X_GET_Y
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSED
+}
+
 // User model for citizens, moderators, and admins
 model User {
   id              String   @id @default(cuid())
@@ -19,18 +113,306 @@ model User {
   phone           String?
   isVerified      Boolean  @default(false)
   isActive        Boolean  @default(true)
-  isBanned        Boolean  @default(false)
-  banReason       String?
-  bannedAt        DateTime?
-  bannedBy        String?
-  role            UserRole @default(CITIZEN)
-  lastLocationLat Float?
-  lastLocationLng Float?
+  role            UserRole @default(USER)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  auditLogs        AuditLog[]
+
+  // Relationships
+  eventRoles    EventRole[]
+  bookings           Booking[]
+  reviews            Review[]
+  notifications      Notification[]
+  loyaltyTransactions LoyaltyTransaction[]
+  auditLogs         AuditLog[]
 
   @@map("users")
+}
+
+model EventRole {
+  id        String        @id @default(cuid())
+  user      User          @relation(fields: [userId], references: [id])
+  userId    String
+  event     Event         @relation(fields: [eventId], references: [id])
+  eventId   String
+  role      EventRoleType
+  createdAt DateTime      @default(now())
+
+  @@unique([userId, eventId, role]) // avoid duplicate assignments
+}
+
+model Event {
+  id              String        @id @default(cuid())
+  title           String
+  description     String        @db.Text
+  shortDescription String?
+  category        EventCategory
+  tags            String[]      @default([])
+  status          EventStatus   @default(DRAFT)
+  
+  // Date & Time
+  startDateTime   DateTime
+  endDateTime     DateTime
+  timezone        String        @default("UTC")
+  
+  // Location
+  venue           String
+  address         String
+  city            String
+  state           String
+  country         String
+  latitude        Float?
+  longitude       Float?
+  isOnline        Boolean       @default(false)
+  onlineLink      String?
+  
+  // Media
+  bannerImage     String?
+  galleryImages   String[]      @default([])
+  
+  // Settings
+  maxAttendees    Int?
+  isPublic        Boolean       @default(true)
+  isFeatured      Boolean       @default(false)
+  allowWaitlist   Boolean       @default(false)
+  
+  
+  contactEmail    String
+  contactPhone    String
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  publishedAt     DateTime?
+
+  // Relationships
+  tickets         Ticket[]
+  bookings        Booking[]
+  eventRoles      EventRole[]
+  reviews         Review[]
+  notifications   Notification[]
+  analytics       EventAnalytics[]
+  checkIns        CheckIn[]
+
+  @@map("events")
+}
+
+model Ticket {
+  id                String     @id @default(cuid())
+  eventId           String
+  name              String
+  description       String?
+  type              TicketType
+  price             Decimal    @db.Decimal(10, 2)
+  currency          String     @default("INR")
+  quantity          Int
+  soldQuantity      Int        @default(0)
+  maxPerUser        Int        @default(10)
+  
+  // Sale Period
+  saleStartDate     DateTime
+  saleEndDate       DateTime
+  
+  // Settings
+  isActive          Boolean    @default(true)
+  transferable      Boolean    @default(true)
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relationships
+  event             Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  bookingItems      BookingItem[]
+
+  @@map("tickets")
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  bookingNumber   String        @unique
+  eventId         String
+  userId          String
+  
+  // Attendee Details
+  attendeeName    String
+  attendeeEmail   String
+  attendeePhone   String
+  
+  // Booking Details
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  discountAmount  Decimal       @default(0) @db.Decimal(10, 2)
+  finalAmount     Decimal       @db.Decimal(10, 2)
+  currency        String        @default("INR")
+  quantity        Int
+  status          BookingStatus @default(PENDING)
+  
+  // QR/Barcode
+  qrCode          String?       @unique
+  barcode         String?       @unique
+  
+  // Metadata
+  metadata        Json?
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  confirmedAt     DateTime?
+  cancelledAt     DateTime?
+
+  // Relationships
+  event           Event         @relation(fields: [eventId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+  items           BookingItem[]
+  payment         Payment?
+  notifications   Notification[]
+  checkIn         CheckIn?
+
+  @@map("bookings")
+}
+
+model BookingItem {
+  id        String  @id @default(cuid())
+  bookingId String
+  ticketId  String
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+
+  // Relationships
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  ticket    Ticket  @relation(fields: [ticketId], references: [id])
+
+  @@map("booking_items")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  bookingId       String        @unique
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("INR")
+  method          PaymentMethod
+  status          PaymentStatus @default(PENDING)
+  
+  // Gateway Details
+  gatewayOrderId  String?       @unique
+  gatewayPaymentId String?      @unique
+  
+  // Transaction Details
+  transactionId   String?       @unique
+  failureReason   String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  paidAt          DateTime?
+
+  // Relationships
+  booking         Booking       @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+
+model Notification {
+  id        String            @id @default(cuid())
+  userId    String
+  eventId   String?
+  bookingId String?
+  
+  type      NotificationType
+  event     NotificationEvent
+  title     String
+  message   String            @db.Text
+  
+  // Delivery Details
+  recipient String            // email/phone based on type
+  sentAt    DateTime?
+  readAt    DateTime?
+  
+  // Template & Metadata
+  templateId String?
+  metadata   Json?
+  
+  createdAt DateTime          @default(now())
+
+  // Relationships
+  user      User              @relation(fields: [userId], references: [id])
+  eventRef  Event?            @relation(fields: [eventId], references: [id])
+  booking   Booking?          @relation(fields: [bookingId], references: [id])
+
+  @@map("notifications")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  rating    Int      // 1-5 stars
+  comment   String?  @db.Text
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId])
+  @@map("reviews")
+}
+
+model CheckIn {
+  id          String   @id @default(cuid())
+  eventId     String
+  bookingId   String   @unique
+  checkedInAt DateTime @default(now())
+  checkedInBy String?  // Staff member who performed check-in
+  method      String   @default("QR") // QR, BARCODE, MANUAL
+
+  // Relationships
+  event       Event    @relation(fields: [eventId], references: [id])
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+
+  @@map("check_ins")
+}
+
+
+model LoyaltyTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  points      Int      // positive for earned, negative for redeemed
+  type        String   // EARNED, REDEEMED, EXPIRED
+  description String
+  eventId     String?
+  bookingId   String?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("loyalty_transactions")
+}
+
+
+
+model EventAnalytics {
+  id              String   @id @default(cuid())
+  eventId         String
+  date            DateTime @db.Date
+  
+  // Metrics
+  views           Int      @default(0)
+  uniqueViews     Int      @default(0)
+  bookings        Int      @default(0)
+  revenue         Decimal  @default(0) @db.Decimal(10, 2)
+  checkIns        Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, date])
+  @@map("event_analytics")
 }
 
 
@@ -56,34 +438,3 @@ model AuditLog {
 }
 
 
-// Enums
-enum UserRole {
-  CITIZEN
-  MODERATOR
-  ADMIN
-}
-
-enum IssueStatus {
-  REPORTED
-  ACKNOWLEDGED
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-  DUPLICATE
-  INVALID
-}
-
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  CRITICAL
-}
-
-enum NotificationType {
-  STATUS_UPDATE
-  ISSUE_FLAGGED
-  ISSUE_RESOLVED
-  ACCOUNT_WARNING
-  SYSTEM_NOTIFICATION
-}
