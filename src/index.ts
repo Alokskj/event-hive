@@ -11,6 +11,7 @@ import {
     notFoundMiddleware,
 } from './lib/error-handling';
 import prisma from '@config/prisma';
+import { startNotificationSchedulers } from './lib/notifications/scheduler';
 
 const app = express();
 
@@ -65,6 +66,8 @@ async function startServer(): Promise<void> {
             );
             console.log(`📡 Listening on port ${port}`);
             console.log(`🌐 Server URL: http://localhost:${port}`);
+            startNotificationSchedulers();
+            console.log('🕒 Notification schedulers started');
         });
 
         // Graceful shutdown handling

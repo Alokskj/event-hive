@@ -1,3 +1,9 @@
-// Export all authentication schemas
 export * from './auth.schema';
 export * from './audit.schema';
+export * from './file-upload';
+export * from './event.schema';
+export * from './ticket.schema';
+export * from './booking.schema';
+export * from './payment.schema';
+export * from './review.schema';
+export * from './checkin.schema';

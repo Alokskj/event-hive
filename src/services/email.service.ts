@@ -6,10 +6,14 @@ import {
 } from '@config/email.config';
 import { EmailTemplate, EmailTemplates } from '@lib/email';
 import {
+    ApiError,
     BadRequestException,
     InternalServerException,
 } from '@lib/error-handling';
 import { auditService } from './audit.service';
+import prisma from '@config/prisma';
+import { generateTicketPdf } from '@lib/utils/ticket-pdf';
+import QRCode from 'qrcode';
 
 interface SendEmailOptions {
     to: string;
@@ -106,6 +110,29 @@ export class EmailService {
     }
 
     /**
+     * Generic plain email (used by notification channel when no template abstraction yet)
+     */
+    async sendPlain(
+        to: string,
+        subject: string,
+        body: string,
+        userId?: string,
+    ): Promise<SendEmailResult> {
+        const template: EmailTemplate = {
+            subject,
+            text: body,
+            html: `<pre style="font-family:inherit;white-space:pre-wrap">${body}</pre>`,
+        } as any;
+        // Reuse a generic category (choose PASSWORD_CHANGED as neutral or first enum)
+        return this.sendEmail({
+            to,
+            template,
+            type: EmailType.PASSWORD_CHANGED,
+            userId,
+        });
+    }
+
+    /**
      * Send welcome email
      */
     async sendWelcomeEmail(
@@ -197,27 +224,87 @@ export class EmailService {
     }
 
     /**
-     * Send account locked notification
+     * Generate QR + PDF + email ticket after successful payment.
+     * Idempotent: if qrCode already exists we still rebuild PDF & resend only if forced.
      */
-    async sendAccountLockedEmail(
-        email: string,
-        firstName: string | undefined,
-        reason: string,
-        userId?: string,
-    ): Promise<SendEmailResult> {
-        const template = EmailTemplates.accountLocked({
-            firstName,
-            email,
-            reason,
+    async sendTicketEmail(
+        bookingId: string,
+        options?: { forceResend?: boolean },
+    ) {
+        const booking = await prisma.booking.findUnique({
+            where: { id: bookingId },
+            include: { event: true, items: { include: { ticket: true } } },
         });
+        if (!booking) throw new ApiError(404, 'Booking not found');
+        if (booking.status !== 'CONFIRMED')
+            throw new ApiError(400, 'Booking not confirmed');
 
-        return this.sendEmail({
-            to: email,
-            template,
-            type: EmailType.ACCOUNT_LOCKED,
-            userId,
-            metadata: { reason },
+        // Generate / reuse QR
+        let qrCode = booking.qrCode;
+        const qrPayload = JSON.stringify({
+            bookingId: booking.id,
+            bookingNumber: booking.bookingNumber,
+            eventId: booking.eventId,
+            userId: booking.userId,
         });
+        if (!qrCode) {
+            qrCode = await QRCode.toDataURL(qrPayload, {
+                width: 300,
+                margin: 1,
+            });
+            await prisma.booking.update({
+                where: { id: booking.id },
+                data: { qrCode },
+            });
+        }
+        const pdfBuffer = await generateTicketPdf({
+            bookingNumber: booking.bookingNumber,
+            eventTitle: booking.event.title,
+            eventDate: new Date(booking.event.startDateTime).toLocaleString(
+                'en-IN',
+                { timeZone: booking.event.timezone || 'UTC' },
+            ),
+            eventVenue: booking.event.venue,
+            attendeeName: booking.attendeeName,
+            items: booking.items.map((i) => ({
+                name: i.ticket.name,
+                quantity: i.quantity,
+            })),
+            qrData: qrPayload,
+        });
+        try {
+            const template = EmailTemplates.ticketDelivery({
+                firstName: booking.attendeeName.split(' ')[0],
+                eventTitle: booking.event.title,
+                bookingNumber: booking.bookingNumber,
+                eventDate: new Date(booking.event.startDateTime).toLocaleString(
+                    'en-IN',
+                    { timeZone: booking.event.timezone || 'UTC' },
+                ),
+                eventVenue: booking.event.venue,
+                items: booking.items.map((i) => ({
+                    name: i.ticket.name,
+                    quantity: i.quantity,
+                })),
+            });
+            await this.transporter?.sendMail?.({
+                from: process.env.SMTP_FROM || 'noreply@eventhive.com',
+                to: booking.attendeeEmail,
+                subject: template.subject,
+                html: template.html,
+                text: template.text,
+                attachments: [
+                    {
+                        filename: `ticket-${booking.bookingNumber}.pdf`,
+                        content: pdfBuffer,
+                        contentType: 'application/pdf',
+                    },
+                ],
+            });
+        } catch (e) {
+            console.error('Failed to send ticket email', e);
+        }
+        return { success: true };
     }
 
     /**
@@ -259,8 +346,6 @@ export class EmailService {
             console.error('Failed to log email activity:', error);
         }
     }
-
-  
 }
 
 export const emailService = new EmailService();

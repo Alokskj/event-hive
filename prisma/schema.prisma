@@ -89,18 +89,7 @@ enum NotificationEvent {
   REFUND_PROCESSED
 }
 
-enum DiscountType {
-  PERCENTAGE
-  FIXED_AMOUNT
-  BUY_X_GET_Y
-}
 
-enum RefundStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  PROCESSED
-}
 
 // User model for citizens, moderators, and admins
 model User {

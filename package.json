@@ -42,14 +42,19 @@
         "module-alias": "^2.2.3",
         "morgan": "^1.10.0",
         "multer": "^2.0.2",
+        "node-cron": "^4.2.1",
+        "node-fetch": "^2.7.0",
         "nodemailer": "^7.0.5",
         "passport": "^0.7.0",
         "passport-jwt": "^4.0.1",
+        "razorpay": "^2.9.6",
         "sharp": "^0.34.3",
         "ua-parser-js": "^2.0.3",
         "uuid": "^11.1.0",
         "winston": "^3.17.0",
-        "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "qrcode": "^1.5.3",
+    "pdfkit": "^0.15.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^19.6.1",
@@ -65,6 +70,7 @@
         "@types/passport": "^1.0.17",
         "@types/passport-jwt": "^4.0.1",
         "@types/ua-parser-js": "^0.7.39",
+    "@types/pdfkit": "^0.13.5",
         "eslint": "^8.57.1",
         "globals": "^15.1.0",
         "husky": "^9.1.7",

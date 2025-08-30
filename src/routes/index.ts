@@ -2,6 +2,13 @@ import { Router } from 'express';
 import { authRoutes } from './auth.routes';
 import { auditRoutes } from './audit.routes';
 import { eventRoutes } from './event.routes';
+import { ticketRoutes } from './ticket.routes';
+import { bookingRoutes } from './booking.routes';
+import { paymentRoutes } from './payment.routes';
+import { reviewRoutes } from './review.routes';
+import { checkInRoutes } from './checkin.routes';
+import { analyticsRoutes } from './analytics.routes';
+import { notificationRoutes } from './notification.routes';
 import emailRoutes from './email.routes';
 import fileRoutes from './file-upload.route';
 
@@ -15,6 +22,13 @@ router.use('/audit', auditRoutes);
 
 // Event routes
 router.use('/events', eventRoutes);
+router.use('/', ticketRoutes);
+router.use('/', bookingRoutes);
+router.use('/', paymentRoutes);
+router.use('/', reviewRoutes);
+router.use('/', checkInRoutes);
+router.use('/', analyticsRoutes);
+router.use('/', notificationRoutes);
 
 // Email routes
 router.use('/email', emailRoutes);

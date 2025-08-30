@@ -66,9 +66,7 @@ export class AuthService {
                 lastName: data.lastName,
                 username: data.username,
                 phone: data.phone,
-                lastLocationLat: data.latitude,
-                lastLocationLng: data.longitude,
-                role: UserRole.CITIZEN,
+                role: UserRole.USER,
             },
         });
 
@@ -138,13 +136,6 @@ export class AuthService {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        // Check if user is banned
-        if (user.isBanned) {
-            throw new BadRequestException(
-                `Account is banned. Reason: ${user.banReason || 'No reason provided'}`,
-            );
-        }
-
         // Check if user is active
         if (!user.isActive) {
             throw new BadRequestException('Account is deactivated');
@@ -199,7 +190,7 @@ export class AuthService {
                 where: { id: payload.userId },
             });
 
-            if (!user || !user.isActive || user.isBanned) {
+            if (!user || !user.isActive) {
                 throw new UnauthorizedException('Invalid refresh token');
             }
 
@@ -279,8 +270,6 @@ export class AuthService {
                 lastName: data.lastName,
                 username: data.username,
                 phone: data.phone,
-                lastLocationLat: data.latitude,
-                lastLocationLng: data.longitude,
             },
         });
 

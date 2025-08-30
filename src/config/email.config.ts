@@ -57,6 +57,7 @@ export enum EmailType {
     ISSUE_RESOLVED = 'ISSUE_RESOLVED',
     ISSUE_FLAGGED = 'ISSUE_FLAGGED',
     WEEKLY_REPORT = 'WEEKLY_REPORT',
+    TICKET = 'TICKET',
 }
 
 // Email status for tracking
