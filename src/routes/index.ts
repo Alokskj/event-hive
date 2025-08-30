@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authRoutes } from './auth.routes';
 import { auditRoutes } from './audit.routes';
+import { eventRoutes } from './event.routes';
 import emailRoutes from './email.routes';
 import fileRoutes from './file-upload.route';
 
@@ -11,6 +12,9 @@ router.use('/auth', authRoutes);
 
 // Audit routes
 router.use('/audit', auditRoutes);
+
+// Event routes
+router.use('/events', eventRoutes);
 
 // Email routes
 router.use('/email', emailRoutes);

@@ -452,7 +452,7 @@ export class AuthService {
     }
 
     /**
-     * Logout user (placeholder for token blacklisting)
+     * Logout user
      */
     async logout(userId: string): Promise<void> {
         // TODO: Implement token blacklisting if needed
