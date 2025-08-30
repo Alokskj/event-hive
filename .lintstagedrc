@@ -1,0 +1,7 @@
+{
+    "./src/**/*.{ts,tsx,json}": [
+        "npm run lint",
+        "npm run prettier:fix"
+    ],
+    "./client/src/**/*.{ts,tsx,json}": ["npm run lint"]
+}

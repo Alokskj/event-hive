@@ -1,0 +1,89 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for citizens, moderators, and admins
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  username        String?  @unique
+  password        String
+  firstName       String?
+  lastName        String?
+  phone           String?
+  isVerified      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  isBanned        Boolean  @default(false)
+  banReason       String?
+  bannedAt        DateTime?
+  bannedBy        String?
+  role            UserRole @default(CITIZEN)
+  lastLocationLat Float?
+  lastLocationLng Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+
+// Audit log for tracking important actions
+model AuditLog {
+  id          String    @id @default(cuid())
+  action      String
+  entity      String
+  entityId    String?
+  oldValues   Json?
+  newValues   Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+
+  // Foreign keys
+  userId      String?
+
+  // Relations
+  user        User?     @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+
+// Enums
+enum UserRole {
+  CITIZEN
+  MODERATOR
+  ADMIN
+}
+
+enum IssueStatus {
+  REPORTED
+  ACKNOWLEDGED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  DUPLICATE
+  INVALID
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationType {
+  STATUS_UPDATE
+  ISSUE_FLAGGED
+  ISSUE_RESOLVED
+  ACCOUNT_WARNING
+  SYSTEM_NOTIFICATION
+}
