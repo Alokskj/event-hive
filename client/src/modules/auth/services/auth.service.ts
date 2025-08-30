@@ -4,9 +4,6 @@ import {
   LoginRequest,
   RegisterRequest,
   VerifyEmailRequest,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
-  ChangePasswordRequest,
   User,
 } from '../types';
 

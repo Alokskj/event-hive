@@ -107,7 +107,7 @@ export class EmailTemplates {
         verificationToken: string;
     }): EmailTemplate {
         const firstName = data.firstName || 'User';
-        const verificationLink = `${this.baseUrl}/verify-email?token=${data.verificationToken}`;
+        const verificationLink = `${this.baseUrl}/auth/verify-email?token=${data.verificationToken}`;
 
         return {
             subject: `Verify Your Email Address - ${this.appName}`,
@@ -348,26 +348,5 @@ If you didn't change your password:
             html: `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;line-height:1.5;color:#111} .card{background:#f8fafc;padding:24px;border-radius:8px} .header{background:#2563eb;color:#fff;padding:16px 24px;border-radius:8px 8px 0 0} .items li{margin:4px 0} .download a{display:inline-block;margin-top:16px;background:#2563eb;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none}</style></head><body><div class="header"><h2>Your Ticket Confirmation</h2></div><div class="card"><p>Hi ${firstName},</p><p>Your booking <strong>${data.bookingNumber}</strong> for <strong>${data.eventTitle}</strong> is confirmed.</p><p><strong>Date:</strong> ${data.eventDate}<br/><strong>Venue:</strong> ${data.eventVenue}</p><p><strong>Tickets:</strong></p><ul class="items">${itemsHtml}</ul><p>The PDF ticket with QR code is attached. Please present it at entry.</p>${data.downloadLink ? `<p class="download"><a href="${data.downloadLink}">Download Ticket PDF</a></p>` : ''}<p>See you at the event!</p><p style="font-size:12px;color:#555">If you didn't make this booking contact support.</p></div></body></html>`,
             text: `Hi ${firstName},\nYour booking ${data.bookingNumber} for ${data.eventTitle} is confirmed.\nDate: ${data.eventDate}\nVenue: ${data.eventVenue}\nTickets:\n${data.items.map((i) => `- ${i.name} x ${i.quantity}`).join('\n')}\nYour PDF ticket with QR code is attached.${data.downloadLink ? ` Download: ${data.downloadLink}` : ''}`,
         };
-    }
-
-    private static getStatusColor(status: string): string {
-        switch (status.toUpperCase()) {
-            case 'REPORTED':
-                return '#6b7280';
-            case 'ACKNOWLEDGED':
-                return '#2563eb';
-            case 'IN_PROGRESS':
-                return '#f59e0b';
-            case 'RESOLVED':
-                return '#059669';
-            case 'CLOSED':
-                return '#374151';
-            case 'DUPLICATE':
-                return '#8b5cf6';
-            case 'INVALID':
-                return '#dc2626';
-            default:
-                return '#6b7280';
-        }
     }
 }

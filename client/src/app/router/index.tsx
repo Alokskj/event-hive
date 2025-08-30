@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router';
-import { authRoutes, userRoutes } from './routes';
+import { authRoutes } from './routes';
 import { NotFoundScreen } from '@/components/feedback';
 import { lazy } from 'react';
 

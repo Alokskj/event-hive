@@ -39,7 +39,13 @@ export const useLogin = () => {
             if (response.user) {
                 queryClient.refetchQueries({ queryKey: AUTH_KEYS.profile });
                 toast.success('Logged in successfully!');
-                navigate('/');
+                if (response.user.isVerified) {
+                    navigate('/');
+                } else {
+                    navigate('/auth/verification-waiting', {
+                        state: { email: response.user.email },
+                    });
+                }
             }
         },
         onError: (error: ApiError) => {
