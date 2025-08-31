@@ -5,6 +5,7 @@ import {
     ListEventsInput,
 } from '../schemas/event.schema';
 import { ApiError } from '../lib/utils/ApiError';
+import { Prisma } from '@prisma/client';
 
 export class EventService {
     /**
@@ -69,7 +70,9 @@ export class EventService {
             page = 0,
             limit = 20,
         } = filters;
-        const where: any = {};
+        const where: Prisma.EventWhereInput = {
+            status: 'PUBLISHED',
+        };
         if (category) where.category = category;
         if (status) where.status = status;
         if (city) where.city = { contains: city, mode: 'insensitive' };

@@ -5,9 +5,7 @@ import { EventService } from '../services/event.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Download, ArrowRight } from 'lucide-react';
-import { useCallback } from 'react';
-import { generateAndDownloadTicket } from '@/lib/ticket/generateTicketImage';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 const BookingConfirmationPage = () => {
   const { bookingId } = useParams();

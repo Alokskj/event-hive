@@ -1,5 +1,7 @@
 # EventHive 🎟️
 
+##**Video Link** : https://assets.campuseats.in/uploads/2025-08-31%2010-31-34.mkv 
+
 **EventHive** is a comprehensive event management platform where organizers can create, publish, and manage events with flexible ticketing and promotions, while attendees can discover, register, pay, and receive tickets via Email/WhatsApp — with timely reminders and smooth check-in experiences.
 
 ---
