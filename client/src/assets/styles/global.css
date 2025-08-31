@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -153,3 +154,9 @@
 .event-marker .pin { display: grid; place-items: center; filter: drop-shadow(0 4px 6px oklch(0 0 0 / 0.25)); }
 .event-marker svg { transition: transform .2s; }
 .event-marker:hover svg { transform: translateY(-2px) scale(1.05); }
+
+.playfair-display {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}

@@ -1,14 +1,32 @@
-import React from 'react'
-import { HeroSection } from '../components/sections'
-import Navbar from '@/components/layout/Navbar'
+import React from 'react';
+import Navbar from '@/components/layout/Navbar';
+import {
+  HeroSection,
+  FeaturesSection,
+  HowItWorksSection,
+  CategoriesSection,
+  StatsSection,
+  TestimonialsSection,
+  CTASection,
+  FooterSection,
+} from '../components/sections';
 
-const HeroPage = () => {
+const HomePage = () => {
   return (
-    <div>
+    <div className="relative">
       <Navbar />
-      <HeroSection />
+      <main className="space-y-0">
+        <HeroSection />
+        <StatsSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <CategoriesSection />
+        <TestimonialsSection />
+        <CTASection />
+      </main>
+      <FooterSection />
     </div>
-  )
-}
+  );
+};
 
-export default HeroPage
+export default HomePage;

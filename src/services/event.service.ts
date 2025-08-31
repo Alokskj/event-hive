@@ -72,14 +72,17 @@ export class EventService {
         const where: any = {};
         if (category) where.category = category;
         if (status) where.status = status;
-        if (city) where.city = city;
-        if (state) where.state = state;
-        if (country) where.country = country;
+        if (city) where.city = { contains: city, mode: 'insensitive' };
+        if (state) where.state = { contains: state, mode: 'insensitive' };
+        if (country) where.country = { contains: country, mode: 'insensitive' };
         if (typeof isFeatured === 'boolean') where.isFeatured = isFeatured;
         if (typeof isPublic === 'boolean') where.isPublic = isPublic;
         if (search) {
             where.OR = [
                 { title: { contains: search, mode: 'insensitive' } },
+                { city: { contains: search, mode: 'insensitive' } },
+                { state: { contains: search, mode: 'insensitive' } },
+                { country: { contains: search, mode: 'insensitive' } },
                 { description: { contains: search, mode: 'insensitive' } },
                 { tags: { has: search } },
             ];

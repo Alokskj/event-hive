@@ -52,7 +52,7 @@ export default function DashboardLayout() {
                         {user?.email}
                     </p>
                     <Button
-                        variant="outline"
+                        variant="destructive"
                         size="sm"
                         className="w-full justify-start gap-2"
                         onClick={() => logout()}
