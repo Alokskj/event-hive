@@ -1,4 +1,5 @@
 import React from 'react';
+import { useReveal, revealClass } from '../hooks/useReveal';
 import { LucideIcon, BarChart3, ScanQrCode, Users2, Sparkles, ShieldCheck, Ticket } from 'lucide-react';
 
 interface FeatureCardProps {
@@ -7,20 +8,27 @@ interface FeatureCardProps {
   desc: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, desc }) => (
-  <div className="group relative rounded-2xl border bg-background/60 backdrop-blur p-6 shadow-sm hover:shadow-lg transition-all overflow-hidden">
-    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-primary/10 via-fuchsia-500/10 to-indigo-500/10 transition-opacity" />
-    <div className="relative flex items-start gap-4">
-      <div className="rounded-xl bg-primary/10 text-primary p-3 ring-1 ring-primary/20">
-        <Icon className="size-6" />
-      </div>
-      <div>
-        <h3 className="font-semibold mb-1 text-sm md:text-base">{title}</h3>
-        <p className="text-xs md:text-sm leading-relaxed text-muted-foreground">{desc}</p>
+const FeatureCard: React.FC<FeatureCardProps & { index: number }> = ({ icon: Icon, title, desc, index }) => {
+  const { ref, shown } = useReveal({ threshold: 0.15 });
+  return (
+    <div
+      ref={ref as any}
+      className={revealClass(shown, `group relative rounded-2xl border bg-background/60 backdrop-blur p-6 shadow-sm hover:shadow-lg transition-all overflow-hidden`)}
+      style={{ transitionDelay: shown ? `${index * 60}ms` : undefined }}
+    >
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-primary/10 via-fuchsia-500/10 to-indigo-500/10 transition-opacity" />
+      <div className="relative flex items-start gap-4">
+        <div className="rounded-xl bg-primary/10 text-primary p-3 ring-1 ring-primary/20">
+          <Icon className="size-6" />
+        </div>
+        <div>
+          <h3 className="font-semibold mb-1 text-sm md:text-base">{title}</h3>
+          <p className="text-xs md:text-sm leading-relaxed text-muted-foreground">{desc}</p>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const features: FeatureCardProps[] = [
   {
@@ -59,11 +67,13 @@ const FeaturesSection = () => {
   return (
     <section className="container py-20" id="features">
       <div className="mx-auto max-w-2xl text-center mb-12 space-y-4">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight">All the tools to make your event thrive</h2>
-        <p className="text-muted-foreground text-sm md:text-base">From discovery to post‑event insights, EventHive streamlines every step so you can focus on creating unforgettable experiences.</p>
+        <h2 className="text-3xl md:text-4xl font-bold playfair-display">All the tools to make your event thrive</h2>
+        <p className="text-muted-foreground text-sm md:text-base">From discovery to post-event insights, EventHive streamlines every step so you can focus on creating unforgettable experiences.</p>
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map(f => <FeatureCard key={f.title} {...f} />)}
+        {features.map((f, i) => (
+          <FeatureCard key={f.title} index={i} {...f} />
+        ))}
       </div>
     </section>
   );
