@@ -5,6 +5,7 @@ import { ApiResponse } from '../lib/utils/ApiResponse';
 import {
     createBookingSchema,
     bookingIdParamSchema,
+    bookingListFilterSchema,
 } from '../schemas/booking.schema';
 import { bookingService } from '../services/booking.service';
 
@@ -29,7 +30,8 @@ export class BookingController {
     listMine = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user?.userId;
         if (!userId) throw new ApiError(401, 'Unauthorized');
-        const bookings = await bookingService.listUserBookings(userId);
+        const filters = bookingListFilterSchema.parse(req.query);
+        const bookings = await bookingService.listUserBookings(userId, filters);
         res.json(new ApiResponse(200, bookings, 'Bookings fetched'));
     });
     cancel = asyncHandler(async (req: Request, res: Response) => {

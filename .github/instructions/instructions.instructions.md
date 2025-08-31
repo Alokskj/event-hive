@@ -10,7 +10,7 @@ applyTo: '**'
 
 ### *Attendee (User)*
 
-* Discover events via search, filters, and map view.
+* Discover events via search, filters, and map view. 
 * Register and book tickets securely.
 * Receive tickets via Email/WhatsApp and download from dashboard.
 * Manage bookings: view, cancel, and claim refunds as per policies.

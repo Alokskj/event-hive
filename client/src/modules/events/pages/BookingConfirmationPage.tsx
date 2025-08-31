@@ -17,13 +17,15 @@ const BookingConfirmationPage = () => {
     queryFn: () => EventService.get(booking!.eventId),
     enabled: !!booking?.eventId,
   });
-  if (isLoading) return <div className="container py-16"><div className="mx-auto max-w-md space-y-6 animate-pulse"><div className="h-32 rounded-xl bg-muted/40" /><div className="h-24 rounded-xl bg-muted/30" /><div className="h-10 rounded-md bg-muted/30" /></div></div>;
-  if (!booking) return <div className="container py-16">Not found</div>;
-  const confirmed = booking.status === 'CONFIRMED';
-  const handleDownload = useCallback(() => {
-    if (!booking || !event) return;
-    generateAndDownloadTicket({ booking, event });
-  }, [booking, event]);
+  const confirmed = booking?.status === 'CONFIRMED';
+
+
+  if (isLoading) {
+    return <div className="container py-16"><div className="mx-auto max-w-md space-y-6 animate-pulse"><div className="h-32 rounded-xl bg-muted/40" /><div className="h-24 rounded-xl bg-muted/30" /><div className="h-10 rounded-md bg-muted/30" /></div></div>;
+  }
+  if (!booking) {
+    return <div className="container py-16">Not found</div>;
+  }
 
   return (
     <div className="container py-16 max-w-3xl space-y-12">
@@ -62,14 +64,7 @@ const BookingConfirmationPage = () => {
         <Button asChild>
           <Link to="/events" className="inline-flex items-center gap-1">Browse more events <ArrowRight className="size-4" /></Link>
         </Button>
-        <Button
-          variant="outline"
-          className="inline-flex items-center gap-2"
-          disabled={!confirmed || isEventLoading}
-          onClick={handleDownload}
-        >
-          <Download className="size-4" /> Download Ticket
-        </Button>
+      
       </div>
 
       <div className="text-center text-xs text-muted-foreground">You can access this booking anytime from your dashboard.</div>

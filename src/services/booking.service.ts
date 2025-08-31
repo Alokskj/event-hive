@@ -104,9 +104,9 @@ export class BookingService {
     }
     async listUserBookings(
         userId: string,
-        opts: { page: number; limit: number; search?: string },
+        opts: { page?: number; limit?: number; search?: string },
     ) {
-        const { page, limit, search } = opts;
+        const { page = 0, limit = 10, search } = opts;
         const where: any = { userId };
         if (search) {
             where.OR = [

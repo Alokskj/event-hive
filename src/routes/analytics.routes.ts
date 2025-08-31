@@ -9,4 +9,9 @@ router.get(
     authenticate,
     analyticsController.getEventDashboardSummary,
 );
+router.get(
+    '/events/:eventId/export',
+    authenticate,
+    analyticsController.exportEventReport,
+);
 export { router as analyticsRoutes };

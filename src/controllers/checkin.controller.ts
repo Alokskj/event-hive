@@ -9,7 +9,7 @@ export class CheckInController {
     checkIn = asyncHandler(async (req: Request, res: Response) => {
         const userId = req.user?.userId;
         const data = checkInSchema.parse(req.body);
-        console.log(data);
+
         const { checkIn, booking, alreadyCheckedIn } =
             await checkInService.checkIn(
                 {

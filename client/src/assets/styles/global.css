@@ -148,3 +148,8 @@
 .leaflet-popup.event-pin-popup .leaflet-popup-content {
     margin: 10px 14px;
 }
+
+/* Custom event markers */
+.event-marker .pin { display: grid; place-items: center; filter: drop-shadow(0 4px 6px oklch(0 0 0 / 0.25)); }
+.event-marker svg { transition: transform .2s; }
+.event-marker:hover svg { transform: translateY(-2px) scale(1.05); }

@@ -17,4 +17,12 @@ export const createBookingSchema = z.object({
 
 export const bookingIdParamSchema = z.object({ bookingId: z.string().cuid() });
 
+export const bookingListFilterSchema = z.object({
+    search: z.string().optional(),
+    page: z.coerce.number().int().min(0).optional(),
+    limit: z.coerce.number().int().min(1).max(100).optional(),
+});
+
 export type CreateBookingInput = z.infer<typeof createBookingSchema>;
+export type BookingIdParam = z.infer<typeof bookingIdParamSchema>;
+export type BookingListFilter = z.infer<typeof bookingListFilterSchema>;

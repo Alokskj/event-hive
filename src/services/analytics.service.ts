@@ -145,5 +145,68 @@ export class AnalyticsService {
             generatedAt: new Date().toISOString(),
         };
     }
+
+    /**
+     * Build raw rows for export (bookings + ticket items + attendee) -> CSV
+     */
+    async exportEventReport(eventId: string, userId: string) {
+        // auth (allow organizer / manager)
+        const role = await prisma.eventRole.findFirst({
+            where: { eventId, userId, role: { in: ['ORGANIZER', 'MANAGER'] } },
+        });
+        if (!role) throw new ApiError(403, 'Not authorized');
+        const event = await prisma.event.findUnique({ where: { id: eventId } });
+        if (!event) throw new ApiError(404, 'Event not found');
+        const bookings = await prisma.booking.findMany({
+            where: { eventId },
+            include: {
+                items: {
+                    include: { ticket: { select: { name: true, type: true } } },
+                },
+            },
+            orderBy: { createdAt: 'asc' },
+        });
+        const rows: Record<string, any>[] = [];
+        bookings.forEach((b) => {
+            if (!b.items.length) {
+                rows.push({
+                    bookingNumber: b.bookingNumber,
+                    status: b.status,
+                    attendeeName: b.attendeeName,
+                    attendeeEmail: b.attendeeEmail,
+                    attendeePhone: b.attendeePhone,
+                    quantity: b.quantity,
+                    finalAmount: b.finalAmount,
+                    ticketName: '',
+                    ticketType: '',
+                    ticketQty: '',
+                    ticketUnitPrice: '',
+                    createdAt: b.createdAt.toISOString(),
+                    confirmedAt: b.confirmedAt?.toISOString() || '',
+                    cancelledAt: b.cancelledAt?.toISOString() || '',
+                });
+            } else {
+                b.items.forEach((it) => {
+                    rows.push({
+                        bookingNumber: b.bookingNumber,
+                        status: b.status,
+                        attendeeName: b.attendeeName,
+                        attendeeEmail: b.attendeeEmail,
+                        attendeePhone: b.attendeePhone,
+                        quantity: b.quantity,
+                        finalAmount: b.finalAmount,
+                        ticketName: it.ticket.name,
+                        ticketType: it.ticket.type,
+                        ticketQty: it.quantity,
+                        ticketUnitPrice: it.unitPrice,
+                        createdAt: b.createdAt.toISOString(),
+                        confirmedAt: b.confirmedAt?.toISOString() || '',
+                        cancelledAt: b.cancelledAt?.toISOString() || '',
+                    });
+                });
+            }
+        });
+        return { event, rows };
+    }
 }
 export const analyticsService = new AnalyticsService();

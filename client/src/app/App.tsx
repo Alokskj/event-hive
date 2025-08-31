@@ -12,7 +12,7 @@ function App() {
                 <Suspense fallback={<LoadingScreen />}>
                         <RouterProvider router={router} />
                 </Suspense>
-                <Toaster expand />
+                <Toaster expand richColors/>
             </QueryClientProvider>
         </>
     );
